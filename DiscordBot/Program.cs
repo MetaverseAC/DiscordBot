@@ -111,10 +111,11 @@ namespace _01_basic_ping_bot
 			if (message.Content == "!version")
 			{
 				var hash = Environment.GetEnvironmentVariable("GIT_HASH");
+				var date = Environment.GetEnvironmentVariable("GIT_DATE");
 				if (hash == null)
 					await message.Channel.SendMessageAsync("No version info. Maybe this is a dev build?");
 				else
-					await message.Channel.SendMessageAsync("Metaverse DiscordBot built from: https://github.com/MetaverseAC/DiscordBot/commit/" + hash);
+					await message.Channel.SendMessageAsync("Metaverse DiscordBot built from: https://github.com/MetaverseAC/DiscordBot/commit/" + hash + " on " + date);
 			}
 		}
 

@@ -119,16 +119,33 @@ namespace _01_basic_ping_bot
 					await message.Channel.SendMessageAsync("Metaverse DiscordBot built from: https://github.com/MetaverseAC/DiscordBot/commit/" + hash + " on " + date);
 			}
 
-			if (message.Content == "!echo")
+			if (message.Content.StartsWith("!echo"))
 			{
+				var msg = message.Content;
 				var guild = _client.GetGuild(GUILD_ID);
-				if (guild.GetUser(message.Author.Id).Roles.Any(c => c.Id == OPERATOR_ROLE_ID))
+				var user = guild.GetUser(message.Author.Id);
+				if (user?.Roles.Any(c => c.Id == OPERATOR_ROLE_ID) ?? false)
 				{
-					await message.Channel.SendMessageAsync("Pass");
+					var s1 = msg.IndexOf(" ") + 1;
+					var s2 = msg.IndexOf(" ", s1) + 1;
+					var channelStr = msg.Substring(s1, s2 - s1 - 1);
+					var echoMsg = msg.Substring(s2, msg.Length - s2);
+					ulong channelId;
+					ulong.TryParse(channelStr, out channelId);
+					var channel = _client.GetChannel(channelId) as ISocketMessageChannel;
+					if (channel != null)
+					{
+						var echo = await channel.SendMessageAsync(echoMsg);
+						await message.Channel.SendMessageAsync("Done:" + echo.GetJumpUrl());
+					}
+					else
+					{
+						await message.Channel.SendMessageAsync("Could not access channel.");
+					}
 				}
 				else
 				{
-					await message.Channel.SendMessageAsync("Echo..echo...echo...");
+					await message.Channel.SendMessageAsync("Must be an operator on Metaverse discord to use this command.");
 				}
 			}
 		}

@@ -56,7 +56,10 @@ namespace _01_basic_ping_bot
 		{
 			// Tokens should be considered secret data, and never hard-coded.
 			var token = Environment.GetEnvironmentVariable("BOT_TOKEN", EnvironmentVariableTarget.Process);
-			Console.WriteLine(token);
+
+			Console.WriteLine($"Built from: {Environment.GetEnvironmentVariable("GIT_HASH") ?? "not set"}");
+			Console.WriteLine($"Built on: {Environment.GetEnvironmentVariable("GIT_DATE") ?? "not set"}");
+
 			await _client.LoginAsync(TokenType.Bot, token);
 			await _client.StartAsync();
 

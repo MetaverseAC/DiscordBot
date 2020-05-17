@@ -118,11 +118,15 @@ namespace _01_basic_ping_bot
 				else
 					await message.Channel.SendMessageAsync("Metaverse DiscordBot built from: https://github.com/MetaverseAC/DiscordBot/commit/" + hash + " on " + date);
 			}
-			
-			var guild = _client.GetGuild(GUILD_ID);
-			if(guild.GetUser(message.Author.Id).Roles.Any(c => c.Id == OPERATOR_ROLE_ID))
+
+			if (message.Content == "!echo")
 			{
-				if (message.Content == "!echo")
+				var guild = _client.GetGuild(GUILD_ID);
+				if (guild.GetUser(message.Author.Id).Roles.Any(c => c.Id == OPERATOR_ROLE_ID))
+				{
+					await message.Channel.SendMessageAsync("Pass");
+				}
+				else
 				{
 					await message.Channel.SendMessageAsync("Echo..echo...echo...");
 				}

@@ -51,6 +51,7 @@ namespace _01_basic_ping_bot
 		const ulong ROLE_MESSAGE_ID = 703293132468387931;
 		const ulong CHANNEL_ID = 702746281981771816;
 		const ulong GUILD_ID = 695318762051731559;
+		const ulong OPERATOR_ROLE_ID = 702744926466736179;
 
 		public async Task MainAsync()
 		{
@@ -116,6 +117,15 @@ namespace _01_basic_ping_bot
 					await message.Channel.SendMessageAsync("No version info. Maybe this is a dev build?");
 				else
 					await message.Channel.SendMessageAsync("Metaverse DiscordBot built from: https://github.com/MetaverseAC/DiscordBot/commit/" + hash + " on " + date);
+			}
+			
+			var guild = _client.GetGuild(GUILD_ID);
+			if(guild.GetUser(message.Author.Id).Roles.Any(c => c.Id == OPERATOR_ROLE_ID))
+			{
+				if (message.Content == "!echo")
+				{
+					await message.Channel.SendMessageAsync("Echo..echo...echo...");
+				}
 			}
 		}
 

@@ -54,7 +54,6 @@ namespace _01_basic_ping_bot
 
 		public async Task MainAsync()
 		{
-			// Tokens should be considered secret data, and never hard-coded.
 			var token = Environment.GetEnvironmentVariable("BOT_TOKEN", EnvironmentVariableTarget.Process);
 
 			Console.WriteLine($"Built from: {Environment.GetEnvironmentVariable("GIT_HASH") ?? "not set"}");
@@ -81,8 +80,8 @@ namespace _01_basic_ping_bot
 
 			var msg = await _client.GetGuild(GUILD_ID).GetTextChannel(CHANNEL_ID).GetMessageAsync(ROLE_MESSAGE_ID);
 
-			
-			foreach(var kvp in roleMap)
+
+			foreach (var kvp in roleMap)
 			{
 				Console.WriteLine($"Trying to add {kvp.Key}");
 				var emote = new Emoji(kvp.Key);
@@ -95,7 +94,7 @@ namespace _01_basic_ping_bot
 				{
 					Console.WriteLine($"Message already has {emote.Name}");
 				}
-			}			
+			}
 		}
 
 		// This is not the recommended way to write a bot - consider
@@ -108,6 +107,15 @@ namespace _01_basic_ping_bot
 
 			if (message.Content == "!ping")
 				await message.Channel.SendMessageAsync("pong!");
+
+			if (message.Content == "!version")
+			{
+				var hash = Environment.GetEnvironmentVariable("GIT_HASH");
+				if (hash == null)
+					await message.Channel.SendMessageAsync("No version info. Maybe this is a dev build?");
+				else
+					await message.Channel.SendMessageAsync("Metaverse DiscordBot built from: https://github.com/MetaverseAC/DiscordBot/commit/" + hash);
+			}
 		}
 
 		private async Task UpdateRoleAsync(SocketReaction reaction, bool isRemove)

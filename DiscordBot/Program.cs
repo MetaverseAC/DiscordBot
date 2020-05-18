@@ -48,8 +48,8 @@ namespace _01_basic_ping_bot
 			{"🇸",703074653874290730},
 		};
 
-		const ulong ROLE_MESSAGE_ID = 703293132468387931;
-		const ulong CHANNEL_ID = 702746281981771816;
+		const ulong ROLE_MESSAGE_ID = 711752387995500606;
+		const ulong CHANNEL_ID = 707632533734686762;
 		const ulong GUILD_ID = 695318762051731559;
 		const ulong OPERATOR_ROLE_ID = 702744926466736179;
 
@@ -119,12 +119,14 @@ namespace _01_basic_ping_bot
 					await message.Channel.SendMessageAsync("Metaverse DiscordBot built from: https://github.com/MetaverseAC/DiscordBot/commit/" + hash + " on " + date);
 			}
 
-			if (message.Content.StartsWith("!echo"))
+			if (!message.Content.StartsWith("!")) return;
+
+			var msg = message.Content;
+			var guild = _client.GetGuild(GUILD_ID);
+			var user = guild.GetUser(message.Author.Id);
+			if (user?.Roles.Any(c => c.Id == OPERATOR_ROLE_ID) ?? false)
 			{
-				var msg = message.Content;
-				var guild = _client.GetGuild(GUILD_ID);
-				var user = guild.GetUser(message.Author.Id);
-				if (user?.Roles.Any(c => c.Id == OPERATOR_ROLE_ID) ?? false)
+				if (message.Content.StartsWith("!echo"))
 				{
 					var s1 = msg.IndexOf(" ") + 1;
 					var s2 = msg.IndexOf(" ", s1) + 1;
@@ -143,11 +145,12 @@ namespace _01_basic_ping_bot
 						await message.Channel.SendMessageAsync("Could not access channel.");
 					}
 				}
-				else
-				{
-					await message.Channel.SendMessageAsync("Must be an operator on Metaverse discord to use this command.");
-				}
 			}
+			else
+			{
+				await message.Channel.SendMessageAsync("Must be an operator on Metaverse discord to use this command.");
+			}
+			
 		}
 
 		private async Task UpdateRoleAsync(SocketReaction reaction, bool isRemove)

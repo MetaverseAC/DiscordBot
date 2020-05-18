@@ -113,10 +113,17 @@ namespace _01_basic_ping_bot
 			{
 				var hash = Environment.GetEnvironmentVariable("GIT_HASH");
 				var date = Environment.GetEnvironmentVariable("GIT_DATE");
-				if (hash == null)
+				if (string.IsNullOrEmpty(hash))
 					await message.Channel.SendMessageAsync("No version info. Maybe this is a dev build?");
 				else
-					await message.Channel.SendMessageAsync("Metaverse DiscordBot built from: https://github.com/MetaverseAC/DiscordBot/commit/" + hash + " on " + date);
+				{
+					await message.Channel.SendMessageAsync(
+$@"Metaverse DiscordBot built from: 
+> <https://github.com/MetaverseAC/DiscordBot/commit/{hash}>
+> SHA: `{hash}`
+> Date: {date}"
+					);
+				}
 			}
 
 			if (!message.Content.StartsWith("!")) return;
@@ -150,7 +157,7 @@ namespace _01_basic_ping_bot
 			{
 				await message.Channel.SendMessageAsync("Must be an operator on Metaverse discord to use this command.");
 			}
-			
+
 		}
 
 		private async Task UpdateRoleAsync(SocketReaction reaction, bool isRemove)

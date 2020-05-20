@@ -17,10 +17,7 @@ namespace DiscordBot.Modules
 		{
 			_client = client;
 		}
-
 		const ulong OPERATOR_ROLE_ID = 702744926466736179;
-		const ulong GUILD_ID = 695318762051731559;
-
 		[Command("ping")]
 		public Task PingAsync() => ReplyAsync("pong!");
 
@@ -43,27 +40,18 @@ $@"Metaverse DiscordBot built from:
 		}
 
 		[Command("echo")]
-		public async Task VersionAsync(ulong channelId, [Remainder] string text)
+		[RequireRole(OPERATOR_ROLE_ID)]
+		public async Task EchoAsync(ulong channelId, [Remainder] string text)
 		{
-			var guild = _client.GetGuild(GUILD_ID);
-			var user = guild.GetUser(Context.User.Id);
-			Console.WriteLine("Got User");
-			if (user?.Roles.Any(c => c.Id == OPERATOR_ROLE_ID) ?? false)
+			var channel = _client.GetChannel(channelId) as ISocketMessageChannel;
+			if (channel != null)
 			{
-				var channel = _client.GetChannel(channelId) as ISocketMessageChannel;
-				if (channel != null)
-				{
-					var echo = await channel.SendMessageAsync(text);
-					await ReplyAsync("Done:" + echo.GetJumpUrl());
-				}
-				else
-				{
-					await ReplyAsync("Could not access channel.");
-				}
+				var echo = await channel.SendMessageAsync(text);
+				await ReplyAsync("Done:" + echo.GetJumpUrl());
 			}
 			else
 			{
-				await ReplyAsync("Must be an operator on Metaverse discord to use this command.");
+				await ReplyAsync("Could not access channel.");
 			}
 		}
 	}

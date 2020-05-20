@@ -17,7 +17,6 @@ namespace DiscordBot.Services
 
         public CommandHandlingService(IServiceProvider services)
         {
-            Console.WriteLine("Constructed Service");
             _commands = services.GetRequiredService<CommandService>();
             _discord = services.GetRequiredService<DiscordSocketClient>();
             _services = services;

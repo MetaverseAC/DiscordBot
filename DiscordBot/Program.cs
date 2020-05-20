@@ -20,7 +20,7 @@ namespace _01_basic_ping_bot
 		{
 			new Program().MainAsync().GetAwaiter().GetResult();
 		}
-		
+
 		public async Task MainAsync()
 		{
 
@@ -38,10 +38,11 @@ namespace _01_basic_ping_bot
 				// We can read from the environment variable to avoid hardcoding.
 				await client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("BOT_TOKEN"));
 				await client.StartAsync();
-				
+
 				// Initialize Services
-				await services.GetRequiredService<CommandHandlingService>().InitializeAsync();				
-				services.GetRequiredService<ReactionRoleService>();								
+				await services.GetRequiredService<CommandHandlingService>().InitializeAsync();
+				services.GetRequiredService<ReactionRoleService>();
+				services.GetRequiredService<JenkinsService>().Initiaize(Environment.GetEnvironmentVariable("JENKINS_TOKEN"));
 				await Task.Delay(Timeout.Infinite);
 			}
 		}
@@ -54,12 +55,19 @@ namespace _01_basic_ping_bot
 
 		private ServiceProvider ConfigureServices()
 		{
+			// Ignore certificate errors
+			var handler = new HttpClientHandler()
+			{
+				ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+			};
+
 			return new ServiceCollection()
 				.AddSingleton<DiscordSocketClient>()
 				.AddSingleton<CommandService>()
 				.AddSingleton<CommandHandlingService>()
-				.AddSingleton<HttpClient>()
+				.AddSingleton<HttpClient>(_ => new HttpClient(handler))
 				.AddSingleton<ReactionRoleService>()
+				.AddSingleton<JenkinsService>()
 				.BuildServiceProvider();
 		}
 	}

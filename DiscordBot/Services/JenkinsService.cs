@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,10 +28,18 @@ namespace DiscordBot.Services
 			_token = token;
 		}
 
-		public async Task RunJobAsync(string job, string cause = "Run through DiscordBot JenkinsService")
+		public async Task RunJobAsync(string job, Dictionary<string, string> args = null, string cause = "Run through DiscordBot JenkinsService")
 		{
-			var uri = $"{JENKINS_URL}/buildByToken/build?job={HttpUtility.UrlEncode(job)}&token={_token}";
-			
+			var endpoint = "build";
+			var argString = "";
+			if (args?.Any() ?? false)
+			{
+				endpoint = "buildWithParameters";
+				argString = "&" + string.Join("&", args.Select(kvp => $"{kvp.Key}={HttpUtility.UrlEncode(kvp.Value)}"));
+			}
+
+			var uri = $"{JENKINS_URL}/buildByToken/{endpoint}?job={HttpUtility.UrlEncode(job)}&token={_token}{argString}";
+
 			if (!string.IsNullOrWhiteSpace(cause))
 			{
 				uri += $"&cause={HttpUtility.UrlEncode(cause)}";

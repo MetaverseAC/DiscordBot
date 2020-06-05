@@ -32,6 +32,7 @@ namespace _01_basic_ping_bot
 				var client = services.GetRequiredService<DiscordSocketClient>();
 
 				client.Log += LogAsync;
+				client.Disconnected += Client_Disconnected;
 				services.GetRequiredService<CommandService>().Log += LogAsync;
 
 				// Tokens should be considered secret data and never hard-coded.
@@ -45,6 +46,14 @@ namespace _01_basic_ping_bot
 				services.GetRequiredService<JenkinsService>().Initiaize(Environment.GetEnvironmentVariable("JENKINS_TOKEN"));
 				await Task.Delay(Timeout.Infinite);
 			}
+		}
+
+		private Task Client_Disconnected(Exception arg)
+		{
+			// https://github.com/discord-net/Discord.Net/issues/960
+			Environment.Exit(-1);
+			// make compiler happy
+			return Task.CompletedTask; 
 		}
 
 		private Task LogAsync(LogMessage log)

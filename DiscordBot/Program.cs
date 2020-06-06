@@ -50,6 +50,7 @@ namespace _01_basic_ping_bot
 
 		private Task Client_Disconnected(Exception arg)
 		{
+			Console.WriteLine($"Recieved Disconnect request event. Exiting process to handle restart gracefully.");
 			// https://github.com/discord-net/Discord.Net/issues/960
 			Environment.Exit(-1);
 			// make compiler happy
